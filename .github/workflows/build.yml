@@ -110,11 +110,11 @@ jobs:
 
       # Step 2: Download update bundles from both architectures
       - name: Download update bundles
-        uses: actions/download-artifact@v4
-        with:
-          name: |
-            Bookworm-bundle-x86
-            Bookworm-bundle-x64
+      uses: actions/download-artifact@v4
+      with:
+        name: |
+          Bookworm-bundle-x86
+          Bookworm-bundle-x64
           path: scripts
 
       # Step 3: Set up Python environment
