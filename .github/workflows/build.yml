@@ -9,6 +9,10 @@ on:
 env:
   PYTHONIOENCODING: utf-8
 
+# 设置GITHUB_TOKEN的权限
+permissions:
+  contents: write  # 允许对仓库内容的写访问
+
 jobs:
   build:
     name: Build
@@ -185,12 +189,13 @@ jobs:
 
       # Step 2: Download update_info.json from the release assets
       - name: Download update_info.json from release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
           Write-Host "Release Assets URL: $ReleaseAssetsUrl"
-          $AuthHeader = "Authorization: Bearer ${{ secrets.MY_CUSTOM_TOKEN }}"
-          Write-Host "AuthHeader: $AuthHeader"
-          Write-Host "GITHUB_TOKEN Length: $(${secrets.MY_CUSTOM_TOKEN}.Length)"
+          $AuthHeader = "token $env:GITHUB_TOKEN"
+          Write-Host "GITHUB_TOKEN Length: $($env:GITHUB_TOKEN.Length)"
           $Assets = Invoke-RestMethod -Headers @{ Authorization = $AuthHeader } -Uri $ReleaseAssetsUrl
           Write-Host "Assets: $($Assets | ConvertTo-Json -Depth 3)"
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
