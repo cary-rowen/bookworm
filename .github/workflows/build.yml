@@ -175,7 +175,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: 'upload\*'
-          draft: false
+          draft: true
           generateReleaseNotes: true
 
   submit_update_info:
@@ -190,19 +190,23 @@ jobs:
       # Step 2: Download update_info.json from the release assets
       - name: Download update_info.json from release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
           Write-Host "Release Assets URL: $ReleaseAssetsUrl"
-          $AuthHeader = "token $env:GITHUB_TOKEN"
-          Write-Host "GITHUB_TOKEN Length: $($env:GITHUB_TOKEN.Length)"
-          $Assets = Invoke-RestMethod -Headers @{ Authorization = $AuthHeader } -Uri $ReleaseAssetsUrl
+          $AuthHeader = "token $env:PAT_TOKEN"
+          Write-Host "PAT_TOKEN Length: $($env:PAT_TOKEN.Length)"
+          $Headers = @{
+            Authorization = $AuthHeader
+            Accept = "application/vnd.github.v3+json"
+          }
+          $Assets = Invoke-RestMethod -Headers $Headers -Uri $ReleaseAssetsUrl
           Write-Host "Assets: $($Assets | ConvertTo-Json -Depth 3)"
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
           Write-Host "Update Info Asset: $($UpdateInfoAsset | ConvertTo-Json)"
           if ($UpdateInfoAsset -ne $null) {
             Write-Host "Downloading update_info.json from: $($UpdateInfoAsset.browser_download_url)"
-            Invoke-WebRequest -Headers @{ Authorization = $AuthHeader } -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
+            Invoke-WebRequest -Headers $Headers -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
           } else {
             Write-Error "update_info.json not found in release assets"
             exit 1
