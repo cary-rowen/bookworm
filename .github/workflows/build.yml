@@ -188,8 +188,9 @@ jobs:
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
           Write-Host "Release Assets URL: $ReleaseAssetsUrl"
-          $AuthHeader = "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+          $AuthHeader = "Authorization: Bearer ${{ secrets.MY_CUSTOM_TOKEN }}"
           Write-Host "AuthHeader: $AuthHeader"
+          Write-Host "GITHUB_TOKEN Length: $(${secrets.MY_CUSTOM_TOKEN}.Length)"
           $Assets = Invoke-RestMethod -Headers @{ Authorization = $AuthHeader } -Uri $ReleaseAssetsUrl
           Write-Host "Assets: $($Assets | ConvertTo-Json -Depth 3)"
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
