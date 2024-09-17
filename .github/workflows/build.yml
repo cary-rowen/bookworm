@@ -187,10 +187,15 @@ jobs:
       - name: Download update_info.json from release
         run: |
           $ReleaseAssetsUrl = "${{ github.event.release.assets_url }}"
+          Write-Host "Release Assets URL: $ReleaseAssetsUrl"
           $AuthHeader = "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+          Write-Host "AuthHeader: $AuthHeader"
           $Assets = Invoke-RestMethod -Headers @{ Authorization = $AuthHeader } -Uri $ReleaseAssetsUrl
+          Write-Host "Assets: $($Assets | ConvertTo-Json -Depth 3)"
           $UpdateInfoAsset = $Assets | Where-Object { $_.name -eq "update_info.json" }
+          Write-Host "Update Info Asset: $($UpdateInfoAsset | ConvertTo-Json)"
           if ($UpdateInfoAsset -ne $null) {
+            Write-Host "Downloading update_info.json from: $($UpdateInfoAsset.browser_download_url)"
             Invoke-WebRequest -Headers @{ Authorization = $AuthHeader } -Uri $UpdateInfoAsset.browser_download_url -OutFile update_info.json
           } else {
             Write-Error "update_info.json not found in release assets"
