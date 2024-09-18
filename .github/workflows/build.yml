@@ -223,6 +223,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           commit-message: 'Update update_info.json after release'
           branch: update-info/${{ github.run_id }}
           title: 'Update update_info.json after release'
