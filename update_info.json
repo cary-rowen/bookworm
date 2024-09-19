@@ -2,8 +2,8 @@
   "b": {
     "version": "2022.1b3",
     "x64_download": "https://github.com/blindpandas/bookworm/releases/download/2022.1b3/Bookworm-2022.1b3-x64-update.bundle",
-    "x64_sha1hash": "253b77ff9a5829cd25e12e192533b8318321576d",
-    "x86_download": "https://github.com/blindpandas/bookworm/releases/download/2022.1b3/Bookworm-2022.1b3-x86-portable.bundle",
-    "x86_sha1hash": "example_x86_sha1hash"
+    "x64_sha1hash": "dd1a09c6521f54152e5450be7ba18b6169c7e38c",
+    "x86_download": "https://github.com/blindpandas/bookworm/releases/download/2022.1b3/Bookworm-2022.1b3-x86-update.bundle",
+    "x86_sha1hash": "67e7c3d84c5498a4e821762f2e61027c65b1a81e"
   }
 }
