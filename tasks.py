@@ -600,11 +600,14 @@ def gen_update_info_file(c):
 
 
 @task(name="gen-checksum")
-def generate_checksum_for_file(c, file_path):
-    """Generate a SHA1 checksum for a file and save it to a file."""
-    path = Path(file_path)
+@make_env
+def generate_checksum_for_bundle(c):
+    """Generate a SHA1 checksum for the update bundle."""
+    env = os.environ
+    fname = f"{env['IAPP_DISPLAY_NAME']}-{env['IAPP_VERSION']}-{env['IAPP_ARCH']}-update.bundle"
+    path = PROJECT_ROOT / "scripts" / fname
     if not path.exists():
-        print(f"Error: File {file_path} does not exist.")
+        print(f"Error: Bundle file {path} does not exist.")
         return
     sha1 = generate_sha1hash(path)
     checksum_file = path.with_suffix(path.suffix + ".sha1")

@@ -59,7 +59,7 @@ jobs:
         run: |
           uv run invoke build
           uv run invoke create-portable
-          uv run invoke gen-checksum --file-path "scripts\Bookworm-${{ env.IAPP_VERSION }}-${{ matrix.CI_ARCH }}-update.bundle"
+          uv run invoke gen-checksum
 
       # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
