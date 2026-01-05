@@ -27,6 +27,8 @@ jobs:
       # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       # Step 2: Install uv
       - name: Install uv
@@ -120,18 +122,16 @@ jobs:
       # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       # Step 2: Download update bundle checksums from both architectures
-      - name: Download update bundle checksum for x64
+      - name: Download update bundle checksums
         uses: actions/download-artifact@v4
         with:
-          name: Bookworm-bundle-checksum-x64
+          pattern: Bookworm-bundle-checksum-*
           path: scripts
-      - name: Download update bundle checksum for x86
-        uses: actions/download-artifact@v4
-        with:
-          name: Bookworm-bundle-checksum-x86
-          path: scripts
+          merge-multiple: true
 
       # Step 3: Install uv
       - name: Install uv
@@ -213,6 +213,8 @@ jobs:
       # Step 1: Check out the repository
       - name: Check out sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       # Step 2: Download update_info.json from the release assets
       - name: Download update_info.json from release
