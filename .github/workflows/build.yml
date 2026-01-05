@@ -141,11 +141,12 @@ jobs:
       # Step 5: Install dependencies
       - name: Install dependencies
         run: |
-          uv sync --locked
-          uv run invoke dev
+          uv sync --locked --no-install-project --only-group dev
 
       # Step 5: Generate update-info.json
       - name: Generate update-info.json
+        env:
+          PYTHONPATH: .
         run: |
           uv run invoke gen-update-info-file
 

@@ -10,6 +10,7 @@ import os
 import shutil
 import subprocess
 import sys
+import hashlib
 from contextlib import redirect_stdout
 from datetime import datetime
 from functools import wraps
@@ -37,6 +38,22 @@ GUIDE_HTML_TEMPLATE = """
   </body>
   </html>
 """.strip()
+
+
+def generate_sha1hash(content):
+    hasher = hashlib.sha1()
+    is_file_like = hasattr(content, "seek")
+    if not is_file_like:
+        file = open(content, "rb")
+    else:
+        content.seek(0)
+        file = content
+    for chunk in file:
+        hasher.update(chunk)
+    if not is_file_like:
+        file.close()
+    return hasher.hexdigest()
+
 
 
 def invert_image(image_path):
@@ -492,7 +509,6 @@ def bundle_update(c):
 @task
 def update_version_info(c):
     from bookworm import app
-    from bookworm.utils import generate_sha1hash
 
     artifacts_folder = PROJECT_ROOT / "scripts"
     json_file = artifacts_folder / "release-info.json"
@@ -521,7 +537,6 @@ def gen_update_info_file(c):
     including download URLs and SHA1 hashes for x86 and x64 builds.
     """
     from bookworm import app
-    from bookworm.utils import generate_sha1hash
 
     print("Generating update information file...")
 
