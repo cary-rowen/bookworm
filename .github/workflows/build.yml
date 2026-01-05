@@ -59,6 +59,7 @@ jobs:
         run: |
           uv run invoke build
           uv run invoke create-portable
+          uv run invoke gen-checksum --file-path "scripts\Bookworm-${{ env.IAPP_VERSION }}-${{ matrix.CI_ARCH }}-update.bundle"
 
       # Step 6: Generate translation catalogs and version info (only for x64)
       - name: Generate translation catalogs and version info
@@ -88,6 +89,13 @@ jobs:
           name: Bookworm-bundle-${{ matrix.CI_ARCH }}
           path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle
 
+      # Step 9.1: Upload update bundle checksum artifact
+      - name: Upload update bundle checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bookworm-bundle-checksum-${{ matrix.CI_ARCH }}
+          path: scripts\Bookworm-*-${{ matrix.CI_ARCH }}-update.bundle.sha1
+
       # Step 10: Upload translation catalogs (only for x64)
       - name: Upload translation catalogs
         if: matrix.CI_ARCH == 'x64'
@@ -113,16 +121,16 @@ jobs:
       - name: Check out sources
         uses: actions/checkout@v4
 
-      # Step 2: Download update bundles from both architectures
-      - name: Download update bundle for x64
+      # Step 2: Download update bundle checksums from both architectures
+      - name: Download update bundle checksum for x64
         uses: actions/download-artifact@v4
         with:
-          name: Bookworm-bundle-x64
+          name: Bookworm-bundle-checksum-x64
           path: scripts
-      - name: Download update bundle for x86
+      - name: Download update bundle checksum for x86
         uses: actions/download-artifact@v4
         with:
-          name: Bookworm-bundle-x86
+          name: Bookworm-bundle-checksum-x86
           path: scripts
 
       # Step 3: Install uv

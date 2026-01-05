@@ -555,13 +555,17 @@ def gen_update_info_file(c):
     x86_bundle_path = artifacts_folder / x86_file
     x64_bundle_path = artifacts_folder / x64_file
 
-    # Generate SHA1 hash or use default if file does not exist
-    x86_sha1hash = (
-        generate_sha1hash(x86_bundle_path) if x86_bundle_path.exists() else "example_x86_sha1hash"
-    )
-    x64_sha1hash = (
-        generate_sha1hash(x64_bundle_path) if x64_bundle_path.exists() else "example_x64_sha1hash"
-    )
+    # Generate SHA1 hash or read from .sha1 file
+    def get_hash(bundle_path):
+        if bundle_path.exists():
+            return generate_sha1hash(bundle_path)
+        checksum_file = bundle_path.with_suffix(bundle_path.suffix + ".sha1")
+        if checksum_file.exists():
+            return checksum_file.read_text().strip()
+        return "example_sha1hash"
+
+    x86_sha1hash = get_hash(x86_bundle_path)
+    x64_sha1hash = get_hash(x64_bundle_path)
 
     # Construct the update info dictionary
     update_info = {
@@ -593,6 +597,19 @@ def gen_update_info_file(c):
         json.dump(existing_data, f, indent=2, sort_keys=True)
 
     print(f"Update information file generated at {update_info_file}")
+
+
+@task(name="gen-checksum")
+def generate_checksum_for_file(c, file_path):
+    """Generate a SHA1 checksum for a file and save it to a file."""
+    path = Path(file_path)
+    if not path.exists():
+        print(f"Error: File {file_path} does not exist.")
+        return
+    sha1 = generate_sha1hash(path)
+    checksum_file = path.with_suffix(path.suffix + ".sha1")
+    checksum_file.write_text(sha1)
+    print(f"Checksum for {path.name} saved to {checksum_file}")
 
 
 def _add_install_args(cmd, context):
