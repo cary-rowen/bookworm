@@ -4,7 +4,7 @@
 from pathlib import Path
 import site
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_dynamic_libs, collect_submodules
 
 
 # Data files
@@ -15,6 +15,9 @@ PACKAGES_WITH_DATA = [
     "tld",
     "docx",
     "pptx",
+]
+DYNAMIC_LIB_PACKAGES = [
+    "prism",
 ]
 BOOKWORM_RESOURCES = collect_data_files(
     "bookworm",
@@ -42,12 +45,16 @@ DATA_FILES += [
 ]
 for pkg_name in PACKAGES_WITH_DATA:
     DATA_FILES += collect_data_files(pkg_name)
+BINARY_FILES = []
+for pkg_name in DYNAMIC_LIB_PACKAGES:
+    BINARY_FILES += collect_dynamic_libs(pkg_name)
 
 # Hidden imports
 HIDDEN_SUBMODULES = [
     "babel",
     "cssselect",
     "odf",
+    "prism",
     "trafilatura",
     "justext",
 ]
@@ -67,7 +74,7 @@ block_cipher = None
 a = Analysis(
     ["Bookworm.py"],
     pathex=[""],
-    binaries=[],
+    binaries=BINARY_FILES,
     datas=DATA_FILES,
     hiddenimports=HIDDEN_IMPORTS,
     hookspath=[],
